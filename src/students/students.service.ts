@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -25,20 +25,38 @@ export class StudentsService {
     }
   }
 
+  // GET ReadAll students
+
   async findAll() {
     const result = await this.studentRepository.find();
     return result;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} student`;
+  // GET ReadOne student
+
+  async findOne(id: number) {
+    try {
+      const result = await this.studentRepository.findOneByOrFail({ id: id });
+      return result;
+    } catch (error) {
+      // console.log(error);
+      throw new HttpException(error, HttpStatus.NOT_FOUND);
+    }
   }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
+  async update(id: number, updateStudentDto: UpdateStudentDto) {
+    try {
+      return await this.studentRepository.update({ id: id }, updateStudentDto);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.NOT_FOUND);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} student`;
+  async remove(id: number) {
+    try {
+      return await this.studentRepository.delete({ id: id });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
   }
 }
