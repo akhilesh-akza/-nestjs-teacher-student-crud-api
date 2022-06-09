@@ -14,9 +14,10 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import {
   ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -26,7 +27,8 @@ export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Post()
-  @ApiBody({ type: CreateStudentDto })
+  @ApiConflictResponse({ description: 'Student already exists' })
+  @ApiCreatedResponse({ description: 'Student created' })
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }
@@ -36,13 +38,15 @@ export class StudentsController {
     return this.studentsService.findAll();
   }
 
-  @ApiNotFoundResponse({ description: 'No Student found' })
+  @ApiNotFoundResponse({ description: "Student doesn't exist" })
   @ApiOkResponse({ description: 'Student found' })
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.studentsService.findOne(+id);
   }
 
+  @ApiNotFoundResponse({ description: "Student doesn't exist" })
+  @ApiOkResponse({ description: 'Student found' })
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -51,6 +55,8 @@ export class StudentsController {
     return this.studentsService.update(+id, updateStudentDto);
   }
 
+  @ApiNotFoundResponse({ description: "Student doesn't exist" })
+  @ApiOkResponse({ description: 'Student deleted' })
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.studentsService.remove(+id);

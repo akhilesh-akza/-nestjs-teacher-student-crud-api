@@ -15,14 +15,10 @@ export class StudentsService {
   // POST Create student
 
   async create(createStudentDto: CreateStudentDto) {
-    try {
-      const result = await this.studentRepository.save(createStudentDto);
-      return result;
-    } catch (error) {
-      return {
-        error,
-      };
+    if (this.studentRepository.hasId(createStudentDto)) {
+      throw new HttpException('Student ID already exists', HttpStatus.CONFLICT);
     }
+    return await this.studentRepository.create(createStudentDto);
   }
 
   // GET ReadAll students
@@ -35,28 +31,30 @@ export class StudentsService {
   // GET ReadOne student
 
   async findOne(id: number) {
-    try {
-      const result = await this.studentRepository.findOneByOrFail({ id: id });
-      return result;
-    } catch (error) {
-      // console.log(error);
-      throw new HttpException(error, HttpStatus.NOT_FOUND);
+    const result = await this.studentRepository.findOneBy({ id: id });
+    if (!result) {
+      throw new HttpException('Student not found', HttpStatus.NOT_FOUND);
     }
+    return result;
   }
 
   async update(id: number, updateStudentDto: UpdateStudentDto) {
-    try {
-      return await this.studentRepository.update({ id: id }, updateStudentDto);
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.NOT_FOUND);
+    const result = await this.studentRepository.update(id, updateStudentDto);
+    if (result.affected == 0) {
+      throw new HttpException('Student not found', HttpStatus.NOT_FOUND);
     }
+    return {
+      message: 'Updated successfully',
+    };
   }
 
   async remove(id: number) {
-    try {
-      return await this.studentRepository.delete({ id: id });
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    const result = await this.studentRepository.delete({ id: id });
+    if (result.affected == 0) {
+      throw new HttpException('Student not found', HttpStatus.NOT_FOUND);
     }
+    return {
+      message: 'Deleted successfully',
+    };
   }
 }
