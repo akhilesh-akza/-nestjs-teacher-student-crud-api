@@ -12,6 +12,8 @@ export class StudentsService {
     private studentRepository: Repository<Student>,
   ) {}
 
+  // POST Create student
+
   async create(createStudentDto: CreateStudentDto) {
     try {
       const result = await this.studentRepository.save(createStudentDto);
@@ -23,8 +25,9 @@ export class StudentsService {
     }
   }
 
-  findAll() {
-    return `This action returns all students`;
+  async findAll() {
+    const result = await this.studentRepository.find();
+    return result;
   }
 
   findOne(id: number) {
