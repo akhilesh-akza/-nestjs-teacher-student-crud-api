@@ -6,14 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-
-enum Dept {
-  CS = 'Computer Science',
-  CE = 'Civil',
-  ME = 'Mechanical',
-  EC = 'Electronics',
-  EE = 'Electrical',
-}
+import { Dept } from 'src/common/departments';
 
 export class CreateStudentDto {
   @ApiProperty({

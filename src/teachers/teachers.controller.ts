@@ -6,39 +6,60 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('/teachers')
 @Controller('teachers')
 export class TeachersController {
-  constructor(private readonly teachersService: TeachersService) {}
+  constructor(private readonly TeachersService: TeachersService) {}
 
+  @ApiOperation({ description: 'Add new Teacher' })
+  @ApiConflictResponse({ description: 'Teacher already exists' })
+  @ApiCreatedResponse({ description: 'Teacher created' })
   @Post()
   create(@Body() createTeacherDto: CreateTeacherDto) {
-    return this.teachersService.create(createTeacherDto);
+    return this.TeachersService.create(createTeacherDto);
   }
 
   @Get()
-  findAll() {
-    return this.teachersService.findAll();
+  findAll(@Query('limit', ParseIntPipe) limit: number) {
+    return this.TeachersService.findAll(limit);
   }
 
+  @ApiNotFoundResponse({ description: "Teacher doesn't exist" })
+  @ApiOkResponse({ description: 'Teacher found' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.teachersService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.TeachersService.findOne(+id);
   }
 
+  @ApiNotFoundResponse({ description: "Teacher doesn't exist" })
+  @ApiOkResponse({ description: 'Teacher found' })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTeacherDto: UpdateTeacherDto) {
-    return this.teachersService.update(+id, updateTeacherDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateteacherDto: UpdateTeacherDto,
+  ) {
+    return this.TeachersService.update(+id, updateteacherDto);
   }
 
+  @ApiNotFoundResponse({ description: "Teacher doesn't exist" })
+  @ApiOkResponse({ description: 'Teacher deleted' })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.teachersService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.TeachersService.remove(+id);
   }
 }

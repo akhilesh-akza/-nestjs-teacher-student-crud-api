@@ -17,6 +17,6 @@ export class Student {
   @Column({ type: 'text' })
   division: string;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'integer', nullable: true })
   age: number;
 }

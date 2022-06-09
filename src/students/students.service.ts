@@ -15,16 +15,26 @@ export class StudentsService {
   // POST Create student
 
   async create(createStudentDto: CreateStudentDto) {
-    if (this.studentRepository.hasId(createStudentDto)) {
+    const exists =
+      (await this.studentRepository.count({
+        where: { id: createStudentDto.id },
+      })) != 0
+        ? true
+        : false;
+
+    if (exists) {
       throw new HttpException('Student ID already exists', HttpStatus.CONFLICT);
     }
-    return await this.studentRepository.create(createStudentDto);
+    this.studentRepository.save(createStudentDto);
+    return {
+      message: 'Student successfully created',
+    };
   }
 
   // GET ReadAll students
 
-  async findAll() {
-    const result = await this.studentRepository.find();
+  async findAll(limit: number) {
+    const result = await this.studentRepository.find({ take: limit });
     return result;
   }
 

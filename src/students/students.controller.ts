@@ -7,17 +7,17 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import {
-  ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -26,16 +26,21 @@ import {
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
-  @Post()
   @ApiConflictResponse({ description: 'Student already exists' })
   @ApiCreatedResponse({ description: 'Student created' })
+  @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }
 
   @Get()
-  findAll() {
-    return this.studentsService.findAll();
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: 'number',
+  })
+  findAll(@Query('limit') limit: number) {
+    return this.studentsService.findAll(limit);
   }
 
   @ApiNotFoundResponse({ description: "Student doesn't exist" })
