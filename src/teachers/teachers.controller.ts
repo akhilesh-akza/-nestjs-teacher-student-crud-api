@@ -51,9 +51,9 @@ export class TeachersController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateteacherDto: UpdateTeacherDto,
+    @Body() updateTeacherDto: UpdateTeacherDto,
   ) {
-    return this.TeachersService.update(+id, updateteacherDto);
+    return this.TeachersService.update(+id, updateTeacherDto);
   }
 
   @ApiNotFoundResponse({ description: "Teacher doesn't exist" })
