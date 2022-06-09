@@ -12,7 +12,7 @@ export class Teacher {
   @Column({ type: 'text' })
   department: Dept;
 
-  @Column()
+  @Column({ type: 'numeric' })
   YOE: number;
 
   @Column({ nullable: true, type: 'integer' })
