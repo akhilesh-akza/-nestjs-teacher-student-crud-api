@@ -45,18 +45,9 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Swagger UI API Documentation
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
+At localhost:3000/api [Default] (http://localhost:3000/api) 
 
 ## Support
 
