@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -15,20 +20,14 @@ export class StudentsService {
   // POST Create student
 
   async create(createStudentDto: CreateStudentDto) {
-    const exists =
-      (await this.studentRepository.count({
-        where: { id: createStudentDto.id },
-      })) != 0
-        ? true
-        : false;
-
-    if (exists) {
-      throw new HttpException('Student ID already exists', HttpStatus.CONFLICT);
+    try {
+      await this.studentRepository.insert(createStudentDto);
+      return {
+        message: 'Student successfully created',
+      };
+    } catch (err) {
+      throw new ConflictException('Student already exists!');
     }
-    this.studentRepository.save(createStudentDto);
-    return {
-      message: 'Student successfully created',
-    };
   }
 
   // GET ReadAll students

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
@@ -15,20 +20,14 @@ export class TeachersService {
   // POST Create teacher
 
   async create(createTeacherDto: CreateTeacherDto) {
-    const exists =
-      (await this.teacherRepository.count({
-        where: { id: createTeacherDto.id },
-      })) != 0
-        ? true
-        : false;
-
-    if (exists) {
-      throw new HttpException('Teacher ID already exists', HttpStatus.CONFLICT);
+    try {
+      await this.teacherRepository.insert(createTeacherDto);
+      return {
+        message: 'Student successfully created',
+      };
+    } catch (err) {
+      throw new ConflictException('Teacher already exists!');
     }
-    this.teacherRepository.save(createTeacherDto);
-    return {
-      message: 'Teacher successfully created',
-    };
   }
 
   // GET ReadAll teacher
